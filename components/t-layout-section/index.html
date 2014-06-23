@@ -1,0 +1,109 @@
+
+<index:>
+  <div x-bind="click: _click" class="section">
+
+    <header class="row">
+      <div class="col-sm-8"> <h2>{{@plural}}</h2> </div>
+      <div class="col-sm-3"><a href="{{@baseUrl}}/new" class="pull-right"><i class="icon-plus"></i>&nbsp;&nbsp;New {{@singular}}</a></div>
+    </header>
+
+    {{if @docs}}
+          
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="btn-group">
+            <button type="button" data-action="table" class="btn btn-default display-table {{if equal(viewType, 'table')}} active{{/}}">List</button>
+            <button type="button" data-action="preview" class="btn btn-default display-preview {{if equal(viewType, 'preview')}} active{{/}}">Preview</button>
+          </div>
+        </div>
+      </div>
+     
+      <div class="row">
+        {{if equal(viewType, 'preview') }}
+          <div class="col-sm-4">
+            <div class="row">
+              <menu class="col-sm-12 nav nav-pills">
+                <li><a href="#">Public</a></li>
+              </menu>
+              <div class="col-sm-12">
+                <ul>
+                  {{each @docs}}
+                    <li>
+                      <a href="{{@baseUrl}}/{{id}}">
+                        <ui:image width="100" height="100" fit="crop" title={{title}} src="{{thumbnail}}">
+                      </a>
+                      <h4>{{title}}</h4>
+                      <h3>{{unless isPublished}}<em class="warning">Draft</em>{{/}}</h3>
+                      {{user.displayName}}
+                        <br>
+                        {{join(tags)}}
+                        <br>
+                        <!-- <admin#datetime value="{publishedAt}"> -->
+                        {{timeSince(publishedAt)}}
+                      </a>
+                    </li>
+                  {{/}}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-8">
+            <div class="row">
+              {{with doc}}
+                <menu class="col-sm-12 nav nav-pills">
+                  <li><a href="{{@baseUrl}}/{{id}}">Edit</a></li>
+                  <li><a href="#" class="doc-remove"><i class="icon-remove">X</i></a></li>
+                </menu>
+                <div class="col-sm-12 doc-preview">
+                  <h3>{{title}}</h3>{{{description}}}
+                </div>
+              {{/with}}
+            </div>
+          </div>
+        {{else}}
+          <div class="col-sm-12 table-responsive">
+            <table class="table table-striped table-condensed">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Title</th>
+                  <th>Categories</th>
+                  <th>Status</th>
+                  <th>Published</th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each @docs as #d}}
+                  <tr>
+                    <td>
+                      <a href="{{@baseUrl}}/{{#d.id}}">
+                        <ui:image width="50" height="50" fit="crop" title={{#d.title}} src="{{#d.thumbnail}}">
+                      </a>
+                    </td>
+                    <td contentEditable="true">{{unescaped #d.title}}</td>
+                    <!-- <td><ui:multiselect values="{#d.categories}" options="{@categories}"></ui#dropdown></td> -->
+                    <td>{{join(#d.categories)}}</td>
+                    <td><ui#dropdown value="{#d.status}" options="{{@statuses}}"></ui#dropdown></td>
+                    <!-- <td><datetime#datetime value="{#d.publishedAt}"></td> -->
+                    <td>{{formatDate(#d.publishedAt)}}</td>
+                    <td><a href="{{@previewBaseUrl}}/{{#d.slug}}" target="_blank">View</a></td>
+                    <td><a href="{{@baseUrl}}/{{#d.id}}">Edit</a></td>
+                    <td><a x-bind="click: delete" data-id="{{#d.id}}" data-model-type="{{@plural}}"><i class="icon-remove"></i>X</a></td>
+                  </tr>
+                {{/}}
+              </tbody>
+            </table>
+          </div>
+        {{/}}
+      </div>
+    {{else}}
+      <div class="row">
+        <div class="col-sm-12">
+          <h4>No {{@plural}} Yet</h4><a href="{{@baseUrl}}/new"><i class="icon-plus"></i>&nbsp;New {{@singular}}</a>
+        </div>
+      </div>
+    {{/}}
+

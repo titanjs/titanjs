@@ -1,0 +1,32 @@
+<register:>
+  {#with :self}
+    <form id="derby-auth-register" class="form-horizontal" action='/register' method='post'>
+
+      <div class="form-group {#if .errors.email}has-error{/}">
+        <label for="email" class="control-label col-md-2">Email</label>
+        <div class="col-md-10">
+          <input class="form-control" type='text' name="email" placeholder="Email" x-bind="blur:emailBlur" value="{.email}"/>
+          <span class="help-block">{.errors.email}</span>
+        </div>
+      </div>
+
+      <div class="form-group {#if .errors.password}has-error{/}">
+        <label for="password" class="control-label col-md-2">Password</label>
+        <div class="col-md-10">
+          <input class="form-control" type='password' name="password" placeholder="Password" value="{.password}"/>
+          <span class="help-block">{.errors.password}</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+          <a href="/login">Already have an account?</a>
+        </div>
+        <br>
+        <br>
+        <div class="col-md-offset-2 col-md-10">
+          <input type="submit" value="Register" class="btn btn-default"/>
+        </div>
+      </div>
+    </form>
+  {/}
