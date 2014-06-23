@@ -4,6 +4,7 @@ var url = require('url');
 var check = require('convict/node_modules/validator').check
 
 module.exports = function config(options, cb) {
+  options = options || {}
   envAlias('MONGOHQ_URL', 'MONGO_URL');
   envAlias('MONGOLAB_URL', 'MONGO_URL');
 
@@ -67,6 +68,40 @@ module.exports = function config(options, cb) {
           default: true,
           env: 'MONGO_SAFE'
         }
+      }
+    },
+    redis: {
+      use: {
+        format: Boolean,
+        default: false,
+        env: 'REDIS_USE'
+      },
+      url: {
+        // format: mongoUrl,
+        format: String,
+        default: undefined,
+        env: 'REDIS_URL',
+        arg: 'redis-url' // eg. $ npm start --redis-url
+      },
+      host: {
+        format: String,
+        default: 'localhost',
+        env: 'REDIS_HOST'
+      },
+      port: {
+        format: 'port',
+        default: 6379,
+        env: 'REDIS_PORT'
+      },
+      db: {
+        format: String,
+        default: undefined,
+        env: 'REDIS_DB'
+      },
+      password: {
+        format: String,
+        default: undefined,
+        env: 'REDIS_PASSWORD'
       }
     },
     session: {

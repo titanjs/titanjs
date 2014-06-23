@@ -1,8 +1,11 @@
 {
   "mongo": {
-    "db": "derby-starter-development"
+    "db": "titan-development"
   },
   "session": {
     "secret": "USE A REAL SECRET WHEN YOU DEPLOY"
+  },
+  "redis": {
+    "use": false
   }
 }
