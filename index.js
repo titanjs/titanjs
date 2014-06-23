@@ -4,7 +4,7 @@ exports.run = run;
 
 function run(app, options, cb) {
   options || (options = {});
-  var config = require('../config')(options);
+  var config = require('./config')(options);
   var port = config.get('port');
   var ip = config.get('ip');
 
