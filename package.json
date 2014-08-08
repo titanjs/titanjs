@@ -43,6 +43,7 @@
     "request": "^2.36.0",
     "serve-favicon": "^2.0",
     "serve-static": "^1.2",
+    "titanjs": "^0.1",
     "xhr": "^1.12.0"
   }
 }
