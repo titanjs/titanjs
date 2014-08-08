@@ -2,95 +2,104 @@
 var derby = require('derby');
 var express = require('express');
 var parseUrl = require('url').parse;
-var path = require('path')
+var path = require('path');
 
 // Express Middleware Imports
-var session = require('express-session');
-var cookieParser = require('cookie-parser');
+var expressSession = require('express-session');
 var serveStatic = require('serve-static');
 var compression = require('compression');
 var favicon = require('serve-favicon');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var highway = require('racer-highway');
+var derbyLogin = require('derby-login');
 
-var racerBrowserChannel = require('racer-browserchannel');
-
-// Local imports
-// -------------
-// Middleware
-var errorMiddleware = require('../apps/error');
-
-var file = require('../file');
-var image = require('../image');
-// Config
-var config = require('../config')();
-// The store creates models and syncs data
-var store = require('../store').store;
-
-
-derby.use(require('racer-bundle'));
-
-var connectStore, sessionStore;
-// If redis is running then use it for session store; it's much faster.
-if (config.get('redis.use')) {
-  connectStore = require('connect-redis')(session);
-  sessionStore = new connectStore({host: config.get('redis.host'), 
-    port: config.get('redis.port'), pass: config.get('redis.password')});
-} else {
-  connectStore = require('connect-mongo')(session);
-  sessionStore = new connectStore({url: config.get('mongo.url')});
-}
-
-exports.setup = setup;
-
-function setup(app, conf, cb) {
-
-  var publicDir = config.get('static') || path.join(__dirname, '/../../public');
-
-  var expressApp = express()
-    .use(favicon(path.join(publicDir, '/favicon.ico')))
-    // Gzip dynamically rendered content
-    .use(compression());
-
-  if (Array.isArray(publicDir)) {
-    for (var i = 0; i < publicDir.length; i++) {
-      var o = publicDir[i];
-      expressApp.use(o.route, serveStatic(o.dir));
-    }
+module.exports = function (config, store, apps, middleware, publicDir, loginConfig, errorMiddleware, cb) {
+  // Session
+  // -------
+  var connectStore, sessionStore;
+  // If redis is running then use it for session store; it's much faster.
+  if (config.get('redis.use')) {
+    connectStore = require('connect-redis')(expressSession);
+    sessionStore = new connectStore({host: config.get('redis.host'), 
+      port: config.get('redis.port'), pass: config.get('redis.password')});
   } else {
-    expressApp.use(serveStatic(publicDir));
+    connectStore = require('connect-mongo')(expressSession);
+    sessionStore = new connectStore({url: config.get('mongo.url')});
   }
 
-  expressApp
+  function addSettings(req, res, next) {
+    var model = req.getModel();
+    if (config.has('settings')) {
+      for(var key in config.get('settings')) {
+        model.set('_settings.' + key, config.get('settings.' + key));
+      }
+    }
+    next();
+  }
+
+  var session = expressSession({
+    secret: config.get('session.secret'),
+    store: sessionStore,
+    cookie: config.get('session.cookie'),
+    saveUninitialized: true,
+    resave: true
+  });
+
+  // Websockets + Browser Channels
+  var handlers = highway(store.store, {session: session});
+
+
+  // Error Middleware
+  // ----------------
+  if (!errorMiddleware) {
+    var errorMiddleware = require('../apps/error');
+  }
+
+
+  var expressApp = express()
+    // .use(favicon(path.join(publicDir, '/favicon.ico')))
+    // Gzip dynamically rendered content
+    .use(compression())
+    .use(serveStatic(publicDir))
+    .use(store.store.modelMiddleware())
     .use(cookieParser())
-    .use(session({
-      secret: config.get('session.secret'),
-      store: sessionStore
-    }));
+    // .use(createUserId)
+    .use(bodyParser.json())
+    .use(bodyParser.urlencoded({extended: true}))
+    .use(session)
+    // .use(derbyLogin.middleware(store.store, loginConfig))
+    .use(addSettings)
+    .use(handlers.middleware);
 
-  // Add browserchannel client-side scripts to model bundles created by store,
-  // and return middleware for responding to remote client messages
+  // File uploads
+  expressApp.use('/-/api/files', require('../file')(store, config));
+  // Image serving
+  expressApp.use('/-/images', require('../image')(store, config));
+  // TODO pass in additional server routes
+  // expressApp.use(require('./routes'));
+
+  // Add additional Middleware
+  if (middleware) {
+    middleware.forEach(function(mw){
+      expressApp.use(mw);
+    });
+  }
+
+  // Add routes for each app
+  apps.forEach(function(app){
+    expressApp.use(app.router());
+  });
+
+
   expressApp
-    .use(racerBrowserChannel(store))
-    // Adds req.getModel method
-    .use(store.modelMiddleware())
-    .use(createUserId);
+    .all('*', function (req, res, next) { next('404: ' + req.url); })
+    // Render Error pages 
+    .use(errorMiddleware);
 
-  // Creates an express middleware from the app's routes
-  expressApp.use(app.router());
-
-  file.routes(expressApp);
-  image.routes(expressApp);
-
-  expressApp.all('*', function(req, res, next) {
-    next('404: ' + req.url);
-  });
-
-  // Render Error pages 
-  expressApp.use(errorMiddleware);
-
-  app.writeScripts(store, publicDir, {extensions: ['.coffee']}, function(err) {
-    cb(err, expressApp);
-  });
+  cb(expressApp, handlers.upgrade);
 }
+
 
 function createUserId(req, res, next) {
   var model = req.getModel();
@@ -99,4 +108,3 @@ function createUserId(req, res, next) {
   model.set('_session.userId', userId);
   next();
 }
-
