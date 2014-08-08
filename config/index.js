@@ -106,11 +106,55 @@ module.exports = function config(options, cb) {
     },
     session: {
       secret: {
-        doc: 'Secret used to sign the session cookie',
+        doc: 'Secret used to sign the session',
         format: secret(16),
         default: undefined,
         env: 'SESSION_SECRET'
+      },
+      cookie: {
+        doc: 'Secret used to sign the cookie',
+        format: secret(16),
+        default: undefined,
+        env: 'SESSION_COOKIE'
       }
+    },
+    mailer: {
+      defaultEmail: {
+        format: String,
+        default: 'First Last <test@example.com>',
+        env: 'MAILER_DEFAULT_EMAIL'
+      },
+      transport: {
+        type: {
+          format: String,
+          default: 'SMTP',
+          env: 'MAILER_TRANSPORT_TYPE'
+        },
+        options: {
+          service: {
+            format: String,
+            default: "gmail",
+            env: 'MAILER_TRANSPORT_SERVICE'
+          },
+          auth: {
+            user: {
+              format: String,
+              default: "test@example.com",
+              env: 'MAILER_AUTH_USER'
+            },
+            pass: {
+              format: String,
+              default: "Passsword",
+              env: 'MAILER_AUTH_PASSWORD'
+            }
+          }
+        }
+      }
+    },
+    settings: {
+      format: Object,
+      default: {},
+      env: 'PUBLIC_SETTINGS'
     }
   });
 

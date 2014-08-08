@@ -1,27 +1,12 @@
-var conf = require('../config')
+var conf = require('../config')();
 var nodemailer = require('nodemailer');
-
-
-// Set default config options, useful for testing
-conf.defaults({
-  "mailer": {
-    "defaultFromAddress": "First Last <test@example.com>",
-    "transport": {
-      "type": 'SMTP',
-      "options": {
-        "service": "gmail",
-        "auth": {
-          "user": "test@example.com",
-          "pass": "Passsword"
-        }
-      }
-    }
-  }
-});
 
 var RecipientRequiredError = new Error('one of the followings is required: to, cc or bcc');
 
 var prettyMessage = function(opts) {
+  if (opts.generateTextFromHTML && !opts.text) {
+    opts.text = 'TEXT IS NOT AUTO-GENERATED WHEN DEBUGING' 
+  };
   var msg = '' +
     '\n////////////////////////////////////////////////////////////////////' +
     '\n/////////////////////////// Message Sent ///////////////////////////' +
@@ -75,20 +60,20 @@ var prettyMessage = function(opts) {
 //  RFC5322 custom headers (dictionary)
 //  
 exports.send = function(opts, callback) {
-  var c = conf.get('email');
+  var c = conf.get('mailer');
   opts = opts || {};
-  if (!opts.to || !opts.cc || !opts.bcc) return callback(RecipientRequiredError)
+  if (!(opts.to || opts.cc || opts.bcc)) return callback(RecipientRequiredError)
 
   // If a from address is not given then use the default from
-  opts.from = opts.from || c.defaultFromAddress;
+  opts.from = opts.from || c.defaultEmail;
 
   // Log the message to the console during development and debug mode
-  if (conf.get('NODE_ENV') === 'development' || conf.get('NODE_ENV') === 'debug') {
+  if (conf.get('env') === 'development' || conf.get('env') === 'debug') {
     console.log(prettyMessage(opts));
   }
 
   // only send real email on production or when debugging
-  if (conf.get('NODE_ENV') === 'production' || conf.get('NODE_ENV') === 'debug') {
+  if (conf.get('env') === 'production' || conf.get('env') === 'debug') {
     var transport = nodemailer.createTransport(c.transport.type, c.transport.options);
     transport.sendMail(opts, function(err, responseStatus) {
       if (err) {

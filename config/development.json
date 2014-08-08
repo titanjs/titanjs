@@ -3,7 +3,8 @@
     "db": "titan-development"
   },
   "session": {
-    "secret": "USE A REAL SECRET WHEN YOU DEPLOY"
+    "secret": "USE A REAL SECRET WHEN YOU DEPLOY",
+    "cookie": "USE A REAL SECRET WHEN YOU DEPLOY"
   },
   "redis": {
     "use": false
