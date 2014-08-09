@@ -63,6 +63,17 @@ function run(obj, callback) {
         });
       });
 
+      store.store.on('client', function(client) {
+        // Register useful rpc handler
+
+        // ping
+        // ----
+        client.channel.on('ping', function(start, cb) {
+          var end = new Date().getTime();
+          cb('ping duration: ' + (end - start));
+        });
+      });
+ 
       callback(null, store, config, expressApp, upgrade)
     });
   });
