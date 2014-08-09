@@ -158,8 +158,9 @@ module.exports = function config(options, cb) {
     }
   });
 
-  config.load(options);
-  config.loadFile(__dirname + '/' + config.get('env') + '.json');
+  options.forEach(function(opts){
+    config.load(opts);
+  });
 
   if (config.has('mongo.url') === false) setMongoUrl(config);
   if (cb) cb(null, config);
