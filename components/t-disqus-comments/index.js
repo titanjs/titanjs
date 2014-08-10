@@ -2,7 +2,7 @@
 module.exports = DisqusComments;
 
 function DisqusComments(){};
-DisqusComments.prototype.name = "disqusComments";
+DisqusComments.prototype.name = "t-disqus-comments";
 DisqusComments.prototype.view = __dirname;
 
 DisqusComments.prototype.init = function(model) { }
