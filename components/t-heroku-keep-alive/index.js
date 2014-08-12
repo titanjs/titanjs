@@ -5,6 +5,7 @@ HerokuKeepAlive.prototype.view = __dirname;
 HerokuKeepAlive.prototype.create = function() {
   // TODO make duration configurable
   var d = this.model.get('duration');
+  var model = this.app.model;
   var duration;
   if (d) {
     duration = parseFloat(d) || 30000;
@@ -14,8 +15,8 @@ HerokuKeepAlive.prototype.create = function() {
   var duration = this.model.get('duration') || 30000;
   var ping = function() {
     var time = new Date().getTime();
-    this.app.model.root.channel.send('ping', time, function(msg) {
-       // console.log(msg);
+    model.root.channel.send('ping', time, function(msg) {
+       console.log(msg);
     });
   };
   // We only want one timer running, so we will use a global.
