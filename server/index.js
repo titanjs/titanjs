@@ -76,8 +76,6 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
   expressApp.use('/-/api/files', require('../file')(store, config));
   // Image serving
   expressApp.use('/-/images', require('../image')(store, config));
-  // TODO pass in additional server routes
-  // expressApp.use(require('./routes'));
 
   // Add additional Middleware
   if (middleware) {
