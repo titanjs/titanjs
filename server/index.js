@@ -8,7 +8,6 @@ var path = require('path');
 var expressSession = require('express-session');
 var serveStatic = require('serve-static');
 var compression = require('compression');
-var favicon = require('serve-favicon');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var highway = require('racer-highway');
@@ -58,7 +57,6 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
 
 
   var expressApp = express()
-    // .use(favicon(path.join(publicDir, '/favicon.ico')))
     // Gzip dynamically rendered content
     .use(compression())
     .use(serveStatic(publicDir))

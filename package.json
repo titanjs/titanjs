@@ -41,7 +41,6 @@
     "racer-schema": "^0.1",
     "redis": "^0.10.3",
     "request": "^2.36.0",
-    "serve-favicon": "^2.0",
     "serve-static": "^1.2",
     "xhr": "^1.12.0"
   }
