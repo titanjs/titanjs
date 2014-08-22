@@ -62,11 +62,10 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
     .use(serveStatic(publicDir))
     .use(store.store.modelMiddleware())
     .use(cookieParser())
-    // .use(createUserId)
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({extended: true}))
     .use(session)
-    // .use(derbyLogin.middleware(store.store, loginConfig))
+    .use(derbyLogin.middleware(store.store, loginConfig))
     .use(addSettings)
     .use(handlers.middleware);
 
@@ -94,13 +93,4 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
     .use(errorMiddleware);
 
   cb(expressApp, handlers.upgrade);
-}
-
-
-function createUserId(req, res, next) {
-  var model = req.getModel();
-  var userId = req.session.userId;
-  if (!userId) userId = req.session.userId = model.id();
-  model.set('_session.userId', userId);
-  next();
 }
