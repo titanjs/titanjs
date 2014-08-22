@@ -16,7 +16,7 @@ HerokuKeepAlive.prototype.create = function() {
   var ping = function() {
     var time = new Date().getTime();
     model.root.channel.send('ping', time, function(msg) {
-       console.log(msg);
+       // console.log(msg);
     });
   };
   // We only want one timer running, so we will use a global.
