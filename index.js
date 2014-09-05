@@ -74,9 +74,8 @@ function run(obj, callback) {
         secureServer = https.createServer(c, expressApp)
         secureServer.on('upgrade', upgrade);
         var securePort = 443;
-        // Bind to higer port in development 
-        var securePort = port;
         if (config.get('env') === 'development') {
+          // Bind to higer port in development 
           var securePort = port;
           // Bump the port number by one for http traffic, so that we don't have an error
           port = port + 1
