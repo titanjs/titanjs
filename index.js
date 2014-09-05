@@ -1,10 +1,9 @@
 require('coffee-script/register');
 
-var http  = require('http');
 var derby = require('derby');
 var express = require('./server');
 var chalk = require('chalk');
-var path = require('path');
+// var path = require('path');
 
 // obj:
 //   - apps
@@ -49,7 +48,28 @@ function run(obj, callback) {
     var publicDir = obj.publicDir || process.cwd() + '/public';
 
     express(config, store, obj.apps, middleware, publicDir, obj.loginConfig, obj.errorMiddleware, function(expressApp, upgrade){
-      var server = http.createServer(expressApp);
+
+      var server;
+
+      // Use SSL if configured
+      var sslKey = config.get('ssl.key');
+      var sslCert = config.get('ssl.cert');
+      var sslPassphrase = config.get('ssl.passphrase');
+      if (sslCert && sslKey) {
+        var https = require('https');
+        var fs = require('fs');
+        var c = {
+          key: fs.readFileSync(sslKey),
+          cert: fs.readFileSync(sslCert)
+        };
+        if (sslPassphrase) {
+          c.passphrase = sslPassphrase;
+        }
+        server = https.createServer(c, expressApp)
+      } else {
+        var http = require('http');
+        server = http.createServer(expressApp);
+      }
 
       server.on('upgrade', upgrade);
 
