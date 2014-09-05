@@ -3,6 +3,8 @@ require('coffee-script/register');
 var derby = require('derby');
 var express = require('./server');
 var chalk = require('chalk');
+var http = require('http');
+
 // var path = require('path');
 
 // obj:
@@ -48,14 +50,18 @@ function run(obj, callback) {
     var publicDir = obj.publicDir || process.cwd() + '/public';
 
     express(config, store, obj.apps, middleware, publicDir, obj.loginConfig, obj.errorMiddleware, function(expressApp, upgrade){
+      
+      obj.apps.forEach(function(app){
+        app.writeScripts(store.store, publicDir, {extensions: ['.coffee']}, function(){
+          console.log('Bundle created:', chalk.yellow(app.name));
+        });
+      });
 
-      var server;
-
-      // Use SSL if configured
-      var sslKey = config.get('ssl.key');
+      // Create secure server if SSL is configured
       var sslCert = config.get('ssl.cert');
-      var sslPassphrase = config.get('ssl.passphrase');
+      var sslKey = config.get('ssl.key');
       if (sslCert && sslKey) {
+        var sslPassphrase = config.get('ssl.passphrase');
         var https = require('https');
         var fs = require('fs');
         var c = {
@@ -65,22 +71,26 @@ function run(obj, callback) {
         if (sslPassphrase) {
           c.passphrase = sslPassphrase;
         }
-        server = https.createServer(c, expressApp)
-      } else {
-        var http = require('http');
-        server = http.createServer(expressApp);
+        secureServer = https.createServer(c, expressApp)
+        secureServer.on('upgrade', upgrade);
+        var securePort = 443;
+        // Bind to higer port in development 
+        var securePort = port;
+        if (config.get('env') === 'development') {
+          var securePort = port;
+          // Bump the port number by one for http traffic, so that we don't have an error
+          port = port + 1
+        }
+        secureServer.listen(securePort, function() {
+          console.log('%d listening. Go to: https://localhost:%d/', process.pid, securePort);
+        });
       }
 
+      var server = http.createServer(expressApp);
       server.on('upgrade', upgrade);
 
       server.listen(port, function() {
         console.log('%d listening. Go to: http://localhost:%d/', process.pid, port);
-      });
-
-      obj.apps.forEach(function(app){
-        app.writeScripts(store.store, publicDir, {extensions: ['.coffee']}, function(){
-          console.log('Bundle created:', chalk.yellow(app.name));
-        });
       });
 
       store.store.on('client', function(client) {

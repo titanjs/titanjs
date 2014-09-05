@@ -28,6 +28,7 @@
     "derby": "0.6.0-alpha24",
     "derby-login": "^0.2.0",
     "express": "^4.4",
+    "express-force-ssl": "^0.2.3",
     "express-session": "^1.4",
     "gm": "~1.16",
     "gridform": "~0.1.6",

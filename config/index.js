@@ -42,6 +42,12 @@ module.exports = function config(options, cb) {
     },
     ssl: {
       key: {
+        doc: 'A Boolean, should all traffic use SSL',
+        format: Boolean,
+        default: false,
+        env: 'SSL_FORCE'
+      },
+      key: {
         doc: 'The path to your ssl key file.',
         format: String,
         default: '',

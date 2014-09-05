@@ -64,7 +64,15 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
     .use(cookieParser())
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({extended: true}))
-    .use(session)
+
+  // Force SSL
+  forceSSL = config.get('ssl.force');
+  if (forceSSL) {
+    var forceSSL = require('express-force-ssl');
+    expressApp.use(forceSSL);
+  }
+  
+  expressApp.use(session)
     .use(derbyLogin.middleware(store.store, loginConfig))
     .use(addSettings)
     .use(handlers.middleware);
