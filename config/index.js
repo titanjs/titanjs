@@ -41,7 +41,7 @@ module.exports = function config(options, cb) {
       default: path.resolve('public')
     },
     ssl: {
-      key: {
+      force: {
         doc: 'A Boolean, should all traffic use SSL',
         format: Boolean,
         default: false,
