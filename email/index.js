@@ -5,8 +5,8 @@ var RecipientRequiredError = new Error('one of the followings is required: to, c
 
 var prettyMessage = function(opts) {
   if (opts.generateTextFromHTML && !opts.text) {
-    opts.text = 'TEXT IS NOT AUTO-GENERATED WHEN DEBUGING' 
-  };
+    opts.text = 'TEXT IS NOT AUTO-GENERATED WHEN DEBUGING';
+  }
   var msg = '' +
     '\n////////////////////////////////////////////////////////////////////' +
     '\n/////////////////////////// Message Sent ///////////////////////////' +
@@ -18,11 +18,11 @@ var prettyMessage = function(opts) {
     '\nBCC: ' + opts.bcc +
     '\nREPLY TO: ' + opts.replyTo +
     '\nSUBJECT: ' + opts.subject +
-    '\n' + 
+    '\n' +
     '\n--------------------------------TEXT--------------------------------' +
     '\n' +
     '\n' + opts.text +
-    '\n' + 
+    '\n' +
     '\n--------------------------------HTML--------------------------------' +
     '\n' +
     '\n' + opts.html +
@@ -33,22 +33,22 @@ var prettyMessage = function(opts) {
 
 // Options:
 //
-//  RFC5322 "From:" address (required)
+//  RFC5322 'From:' address (required)
 //
 //  to String or Array of strings
-//  RFC5322 "To:" address[es]
+//  RFC5322 'To:' address[es]
 //
 //  cc String or Array of strings
-//  RFC5322 "Cc:" address[es]
+//  RFC5322 'Cc:' address[es]
 //
 //  bcc String or Array of strings
-//  RFC5322 "Bcc:" address[es]
+//  RFC5322 'Bcc:' address[es]
 //
 //  replyTo String or Array of strings
-//  RFC5322 "Reply-To:" address[es]
+//  RFC5322 'Reply-To:' address[es]
 //
 //  subject String
-//  RFC5322 "Subject:" line
+//  RFC5322 'Subject:' line
 //
 //  text String
 //  RFC5322 mail body (plain text)
@@ -62,7 +62,7 @@ var prettyMessage = function(opts) {
 exports.send = function(opts, callback) {
   var c = conf.get('mailer');
   opts = opts || {};
-  if (!(opts.to || opts.cc || opts.bcc)) return callback(RecipientRequiredError)
+  if (!(opts.to || opts.cc || opts.bcc)) return callback(RecipientRequiredError);
 
   // If a from address is not given then use the default from
   opts.from = opts.from || c.defaultEmail;
@@ -77,8 +77,8 @@ exports.send = function(opts, callback) {
     var transport = nodemailer.createTransport(c.transport.type, c.transport.options);
     transport.sendMail(opts, function(err, responseStatus) {
       if (err) {
-        console.log("titan-email: There was an error sending message: ", err);
-        console.log("opts: ", opts);
+        console.log('titan-email: There was an error sending message: ', err);
+        console.log('opts: ', opts);
         return callback(err);
       }
       callback(null, responseStatus.message, opts.html, opts.text);

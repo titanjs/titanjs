@@ -1,6 +1,5 @@
 var liveDbMongo = require('livedb-mongo');
 var mongo = require('mongoskin');
-var redisClient;
 
 var liveDbMongo = require('livedb-mongo');
 var coffeeify = require('coffeeify');
@@ -22,13 +21,14 @@ function store(derby, schemas, config) {
   var liveDb = liveDbMongo(skin);
 
   var opts = { db: liveDb };
+  var redisClient;
 
   // Redis
   // -----
   // Configure opts to include Redis if it's running.
   if (config.get('redis.use')) {
     var redis = require('redis');
-    var redisClient = redis.createClient(config.get('redis.port'), 
+    var redisClient = redis.createClient(config.get('redis.port'),
       config.get('redis.host'));
     // Set the password
     if (config.get('redis.password')) {
@@ -36,7 +36,7 @@ function store(derby, schemas, config) {
     }
     // Set the db
     redisClient.select(config.get('redis.db') || 1);
-    opts.redis = redisClient
+    opts.redis = redisClient;
   }
   var store = derby.createStore(opts);
 
@@ -66,5 +66,5 @@ function store(derby, schemas, config) {
     liveDbMongo: liveDb,
     mongo: skin,
     redis: redisClient,
-  }
+  };
 }

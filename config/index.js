@@ -1,10 +1,10 @@
 var convict = require('convict');
 var path = require('path');
 var url = require('url');
-var check = require('convict/node_modules/validator').check
+var check = require('convict/node_modules/validator').check;
 
 module.exports = function config(options, cb) {
-  options = options || {}
+  options = options || {};
   envAlias('MONGOHQ_URL', 'MONGO_URL');
   envAlias('MONGOLAB_URL', 'MONGO_URL');
 
@@ -71,7 +71,7 @@ module.exports = function config(options, cb) {
         format: mongoUrl,
         default: undefined,
         env: 'MONGO_URL',
-        arg: 'mongo-url' // eg. $ npm start --mongo-url "mongodb://127.0.0.1:27017/whatever"
+        arg: 'mongo-url' // eg. $ npm start --mongo-url 'mongodb://127.0.0.1:27017/whatever'
       },
       host: {
         format: String,
@@ -159,18 +159,18 @@ module.exports = function config(options, cb) {
         options: {
           service: {
             format: String,
-            default: "gmail",
+            default: 'gmail',
             env: 'MAILER_TRANSPORT_SERVICE'
           },
           auth: {
             user: {
               format: String,
-              default: "test@example.com",
+              default: 'test@example.com',
               env: 'MAILER_AUTH_USER'
             },
             pass: {
               format: String,
-              default: "Passsword",
+              default: 'Passsword',
               env: 'MAILER_AUTH_PASSWORD'
             }
           }
@@ -193,7 +193,7 @@ module.exports = function config(options, cb) {
 
   config.validate();
   return config;
-}
+};
 
 function setMongoUrl(config) {
   var m = config.get('mongo');
@@ -203,27 +203,27 @@ function setMongoUrl(config) {
 function secret(length) {
   return function (val) {
     check(val).notEmpty().len(length);
-  }
+  };
 }
 
 function optionalSecret(length) {
   return function (val) {
     if (!!val) secret(length)(val);
-  }
+  };
 }
 
 function checkUrl(protocol, attributes) {
   return function (val) {
     var u = url.parse(val);
-    check(u.protocol, 'Wrong protocol.').equals(protocol)
+    check(u.protocol, 'Wrong protocol.').equals(protocol);
     attributes.forEach(function (attr) {
-      check(u[attr]).notEmpty()
-    })
-  }
+      check(u[attr]).notEmpty();
+    });
+  };
 }
 
 function mongoUrl(val) {
-  checkUrl('mongodb:', ['hostname','port','path'])(val)
+  checkUrl('mongodb:', ['hostname','port','path'])(val);
 }
 
 function envAlias(source, target) {
@@ -235,7 +235,7 @@ function mountPoints(val) {
     val.forEach(function (el) {
       check(el.route).contains('/');
       check(el.dir).notEmpty();
-    })
+    });
   } else {
     check(val).notEmpty();
   }

@@ -1,4 +1,4 @@
-methods = require('./index').methods;
+var methods = require('./index').methods;
 
 exports.routes = function(app, store, conf) {
   app.all('/-/rpc', rpc);
@@ -20,7 +20,7 @@ var rpc = function(req, res, next) {
   if (!m) {
     obj.err = 'Method not found';
     return res.send(obj);
-  };
+  }
   m(r.args, function(err, resp){
     // TODO validate return
     return res.send({err: err, msg: resp});

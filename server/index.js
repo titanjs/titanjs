@@ -16,15 +16,15 @@ var derbyLogin = require('derby-login');
 module.exports = function (config, store, apps, middleware, publicDir, loginConfig, errorMiddleware, cb) {
   // Session
   // -------
-  var connectStore, sessionStore;
+  var ConnectStore, sessionStore;
   // If redis is running then use it for session store; it's much faster.
   if (config.get('redis.use')) {
-    connectStore = require('connect-redis')(expressSession);
-    sessionStore = new connectStore({host: config.get('redis.host'), 
+    ConnectStore = require('connect-redis')(expressSession);
+    sessionStore = new ConnectStore({host: config.get('redis.host'), 
       port: config.get('redis.port'), pass: config.get('redis.password')});
   } else {
-    connectStore = require('connect-mongo')(expressSession);
-    sessionStore = new connectStore({url: config.get('mongo.url')});
+    ConnectStore = require('connect-mongo')(expressSession);
+    sessionStore = new ConnectStore({url: config.get('mongo.url')});
   }
 
   function addSettings(req, res, next) {
@@ -63,7 +63,7 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
     .use(store.store.modelMiddleware())
     .use(cookieParser())
     .use(bodyParser.json())
-    .use(bodyParser.urlencoded({extended: true}))
+    .use(bodyParser.urlencoded({extended: true}));
 
   // Force SSL
   forceSSL = config.get('ssl.force');
@@ -101,4 +101,4 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
     .use(errorMiddleware);
 
   cb(expressApp, handlers.upgrade);
-}
+};

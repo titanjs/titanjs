@@ -14,10 +14,11 @@ var gridfs;
 var MAX_AGE = 31536000;
 
 module.exports = function(store, conf) {
-  e = express.Router();
+  var e = express.Router();
 
   store.mongo.open(function(err, db) {
-    gridfs = Grid(db, mongo);
+    // XXX might break things. Test.
+    gridfs = new Grid(db, mongo);
     if (!err) {
       // console.log('database connected');
     } else {
@@ -32,7 +33,7 @@ module.exports = function(store, conf) {
     // TODO use regex for this?
     // if doesn't end with '/' then get the file name
     var parts = url.split('/');
-    // remove "" (empty)
+    // remove '' (empty)
     parts.shift();
     var id = parts.shift();
     var filename = parts.pop();
@@ -54,7 +55,7 @@ module.exports = function(store, conf) {
       next('404: ' + req.url);
     });
 
-    var base = gm(readStream)
+    var base = gm(readStream);
 
     var gMap = function(key) {
       var g = {
@@ -67,8 +68,8 @@ module.exports = function(store, conf) {
         'southwest': 'SouthWest',
         'south': 'South',
         'southeast': 'SouthEast'
-      }
-      return g[key.toLowerCase()] || 'NorthWest'
+      };
+      return g[key.toLowerCase()] || 'NorthWest';
     };
 
     for (var i = 0; i < cmds.length; i++) {
@@ -78,26 +79,26 @@ module.exports = function(store, conf) {
       // maintaining the aspect ratio of the image, but the resulting width or 
       // height are treated as minimum values rather than maximum values.
       switch (c[0]) {
-        case 'scale_crop':
-          var a = c[1].split('x');
-          base.gravity(gMap(c[2]));
-          base.resize(parseInt(a[0], 10), parseInt(a[1], 10), '^');
-          base.crop(parseInt(a[0], 10), parseInt(a[1], 10));
-          break;
-        case 'resize':
-          var a = c[1].split('x');
-          var w = null;
-          var h = null;
-          if (a[0]) w = parseInt(a[0], 10);
-          if (a[1]) h = parseInt(a[1], 10);
-          // base.resize(w, h, '^');
-          base.resize(w, h);
-          break;
-        default:
-          console.log("default");
+      case 'scale_crop':
+        var a = c[1].split('x');
+        base.gravity(gMap(c[2]));
+        base.resize(parseInt(a[0], 10), parseInt(a[1], 10), '^');
+        base.crop(parseInt(a[0], 10), parseInt(a[1], 10));
+        break;
+      case 'resize':
+        var a = c[1].split('x');
+        var w = null;
+        var h = null;
+        if (a[0]) w = parseInt(a[0], 10);
+        if (a[1]) h = parseInt(a[1], 10);
+        // base.resize(w, h, '^');
+        base.resize(w, h);
+        break;
+      default:
+        console.log('default');
       }
     }
-    // base.mode("JPEG");
+    // base.mode('JPEG');
     // base.compress('JPEG');
 
     // var mimeType = 'png'
@@ -119,4 +120,4 @@ module.exports = function(store, conf) {
   e.all('*', imagesRoute);
 
   return e;
-}
+};

@@ -71,14 +71,14 @@ function run(obj, callback) {
         if (sslPassphrase) {
           c.passphrase = sslPassphrase;
         }
-        secureServer = https.createServer(c, expressApp)
+        var secureServer = https.createServer(c, expressApp);
         secureServer.on('upgrade', upgrade);
         var securePort = 443;
         if (config.get('env') === 'development') {
           // Bind to higer port in development 
           var securePort = port;
           // Bump the port number by one for http traffic, so that we don't have an error
-          port = port + 1
+          port = port + 1;
         }
         secureServer.listen(securePort, function() {
           console.log('%d listening. Go to: https://localhost:%d/', process.pid, securePort);
@@ -103,7 +103,7 @@ function run(obj, callback) {
         });
       });
  
-      callback(null, store, config, expressApp, upgrade)
+      callback(null, store, config, expressApp, upgrade);
     });
   });
 }

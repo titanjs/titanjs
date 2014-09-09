@@ -8,10 +8,12 @@ var _ = require('lodash');
 var gridfs;
 
 module.exports = function(store, conf) {
-  e = express.Router();
+  var e = express.Router();
   
   store.mongo.open(function(err, db) {
-    gridfs = Grid(db, mongo);
+    // XXX: new might break things
+    // Add tests
+    gridfs = new Grid(db, mongo);
     gridform.db = db;
     gridform.mongo = mongo;
     if (!err) {
@@ -29,20 +31,20 @@ module.exports = function(store, conf) {
 
     form.on('fileBegin', function(name, file) {
       // file.metadata = '';
-    })
+    });
     form.on('field', function(name, value) {});
     form.on('file', function(name, value) {});
     form.on('error', function(name, value) {});
     form.addListener('end', function() {});
     form.on('end', function(err, fields, files) {});
     form.on('aborted', function(err, fields, files) {});
-    form.on('progress', function(bytesReceived, bytesExpected) {})
+    form.on('progress', function(bytesReceived, bytesExpected) {});
     
     form.parse(req, function(err, fields, files) {
-      var f = files.file
-      f.id = f._id = f.id
-      model = req.getModel();
-      model.set("images." + f.id, f);
+      var f = files.file;
+      f.id = f._id = f.id;
+      var model = req.getModel();
+      model.set('images.' + f.id, f);
       res.send(f);
     });
   };
