@@ -46,6 +46,14 @@ function run(obj, callback) {
     var port = config.get('port');
     var ip = config.get('ip');
     var middleware = obj.middleware || [];
+
+    if (obj.methods) {
+      var methods = require('./methods');
+      Object.keys(obj.methods).forEach(function (key) {
+        methods.register(key, obj.methods[key]);
+      });
+    }
+
     // Defaults to the root/public of application
     var publicDir = obj.publicDir || process.cwd() + '/public';
 

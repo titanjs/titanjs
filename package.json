@@ -4,7 +4,7 @@
   "description": "A generic server for a simple Derby app",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/*.mocha.js; ./node_modules/.bin/jshint index.js **/*.js test/*.js --exclude ./node_modules/expect.js/*.js"
+    "test": "./node_modules/.bin/mocha test/*.mocha.coffee; ./node_modules/.bin/jshint index.js **/*.js test/*.js --exclude ./node_modules/expect.js/*.js"
   },
   "repository": {
     "type": "git",
@@ -45,12 +45,13 @@
     "racer-schema": "^0.1",
     "redis": "^0.10.3",
     "request": "^2.36.0",
-    "serve-static": "^1.2",
-    "xhr": "^1.12.0"
+    "serve-static": "^1.2"
   },
   "devDependencies": {
     "expect.js": "*",
     "jshint": "*",
-    "mocha": "*"
+    "mocha": "*",
+    "superagent": "^0.18.2",
+    "supertest": "^0.13.0"
   }
 }

@@ -77,6 +77,8 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
     .use(addSettings)
     .use(handlers.middleware);
 
+  // RPC Methods
+  expressApp.use('/-/rpc', require('../methods/server')(store, config));
   // File uploads
   expressApp.use('/-/api/files', require('../file')(store, config));
   // Image serving
