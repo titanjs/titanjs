@@ -111,7 +111,7 @@ function run(obj, callback) {
         });
       });
  
-      callback(null, store, config, expressApp, upgrade);
+      callback(undefined, store, config, expressApp, upgrade);
     });
   });
 }
