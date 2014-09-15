@@ -45,13 +45,13 @@
     "racer-schema": "^0.1",
     "redis": "^0.10.3",
     "request": "^2.36.0",
-    "serve-static": "^1.2"
+    "serve-static": "^1.2",
+    "superagent": "^0.18.2"
   },
   "devDependencies": {
     "expect.js": "*",
     "jshint": "*",
     "mocha": "*",
-    "superagent": "^0.18.2",
     "supertest": "^0.13.0"
   }
 }
