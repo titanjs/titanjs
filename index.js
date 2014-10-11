@@ -4,6 +4,7 @@ var derby = require('derby');
 var express = require('./server');
 var chalk = require('chalk');
 var http = require('http');
+var derbyHook = require('derby-hook');
 
 // var path = require('path');
 
@@ -95,6 +96,9 @@ function run(obj, callback) {
 
       var server = http.createServer(expressApp);
       server.on('upgrade', upgrade);
+
+      // Add 'hook' and 'onQuery' functions to the store 
+      derbyHook(store.store);
 
       server.listen(port, function() {
         console.log('%d listening. Go to: http://localhost:%d/', process.pid, port);
