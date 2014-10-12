@@ -66,34 +66,6 @@ function run(obj, callback) {
         });
       });
 
-      // Create secure server if SSL is configured
-      var sslCert = config.get('ssl.cert');
-      var sslKey = config.get('ssl.key');
-      if (sslCert && sslKey) {
-        var sslPassphrase = config.get('ssl.passphrase');
-        var https = require('https');
-        var fs = require('fs');
-        var c = {
-          key: fs.readFileSync(sslKey),
-          cert: fs.readFileSync(sslCert)
-        };
-        if (sslPassphrase) {
-          c.passphrase = sslPassphrase;
-        }
-        var secureServer = https.createServer(c, expressApp);
-        secureServer.on('upgrade', upgrade);
-        var securePort = 443;
-        if (config.get('env') === 'development') {
-          // Bind to higer port in development 
-          var securePort = port;
-          // Bump the port number by one for http traffic, so that we don't have an error
-          port = port + 1;
-        }
-        secureServer.listen(securePort, function() {
-          console.log('%d listening. Go to: https://localhost:%d/', process.pid, securePort);
-        });
-      }
-
       var server = http.createServer(expressApp);
       server.on('upgrade', upgrade);
 

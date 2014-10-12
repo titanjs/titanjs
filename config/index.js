@@ -40,32 +40,6 @@ module.exports = function config(options, cb) {
       format: mountPoints,
       default: path.resolve('public')
     },
-    ssl: {
-      force: {
-        doc: 'A Boolean, should all traffic use SSL',
-        format: Boolean,
-        default: false,
-        env: 'SSL_FORCE'
-      },
-      key: {
-        doc: 'The path to your ssl key file.',
-        format: String,
-        default: '',
-        env: 'SSL_KEY'
-      },
-      cert: {
-        doc: 'The path to your ssl cert file.',
-        format: String,
-        default: '',
-        env: 'SSL_CERT'
-      },
-      passphrase: {
-        doc: 'The ssl passphrase',
-        format: String,
-        default: '',
-        env: 'SSL_PASSPHRASE'
-      }
-    },
     mongo: {
       url: {
         format: mongoUrl,

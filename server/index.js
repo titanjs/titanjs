@@ -65,13 +65,6 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({extended: true}));
 
-  // Force SSL
-  forceSSL = config.get('ssl.force');
-  if (forceSSL) {
-    var forceSSL = require('express-force-ssl');
-    expressApp.use(forceSSL);
-  }
-  
   expressApp.use(session)
     .use(derbyLogin.middleware(store.store, loginConfig))
     .use(addSettings)
@@ -92,9 +85,11 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
   }
 
   // Add routes for each app
-  apps.forEach(function(app){
-    expressApp.use(app.router());
-  });
+  if (apps) {
+    apps.forEach(function(app){
+      expressApp.use(app.router());
+    });
+  }
 
 
   expressApp
