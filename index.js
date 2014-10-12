@@ -1,6 +1,7 @@
 require('coffee-script/register');
 require('log-timestamp')(function() { return  chalk.gray(new Date().toISOString()) + ' %s'});
 
+var async = require('async');
 var derby = require('derby');
 var express = require('./server');
 var chalk = require('chalk');
@@ -42,7 +43,7 @@ var derbyHook = require('derby-hook');
 //   - function - (err, store, config, expressApp, upgrade)
 function run(obj, callback) {
 
-  derby.run(function(){
+  derby.run(function() {
     var config = require('./config')(obj.config);
     var store = require('./store')(derby, obj.schemas, config);
     var port = config.get('port');
@@ -60,12 +61,19 @@ function run(obj, callback) {
     var publicDir = obj.publicDir || process.cwd() + '/public';
 
     express(config, store, obj.apps, middleware, publicDir, obj.loginConfig, obj.errorMiddleware, function(expressApp, upgrade){
-      
-      obj.apps.forEach(function(app){
-        app.writeScripts(store.store, publicDir, {extensions: ['.coffee']}, function(){
-          console.log('Bundle created:', chalk.yellow(app.name));
+
+      async.each(obj.apps, bundleApp, function() {});
+
+      function bundleApp(app, cb) {
+        app.writeScripts(store.store, publicDir, {extensions: ['.coffee']}, function(err){
+          if (err) {
+            console.log('Bundle not created:', chalk.red(app.name), ', error:', err);
+          } else {
+            console.log('Bundle created:', chalk.blue(app.name));
+          }
+          cb();
         });
-      });
+      }
 
       var server = http.createServer(expressApp);
       server.on('upgrade', upgrade);
@@ -74,7 +82,7 @@ function run(obj, callback) {
       derbyHook(store.store);
 
       server.listen(port, function() {
-        console.log('%d listening. Go to: http://localhost:%d/', process.pid, port);
+        console.log('%d listening. Go to: ' + chalk.yellow('http://localhost:%d/'), process.pid, port);
       });
 
       store.store.on('client', function(client) {
