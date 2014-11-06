@@ -1,5 +1,15 @@
 var express = require('express');
-var methods = require('./index');
+var client = require('./index');
+
+
+function _caller(name, args, model, cb) {
+  var m = client.methods[name];
+  if (!m) {
+    cb('Method not found');
+    return;
+  }
+  var result = m(args, model, cb);
+}
 
 module.exports = function(store, conf) {
   var e = express.Router();
@@ -11,7 +21,7 @@ module.exports = function(store, conf) {
     req.accepts('json');
     var r = req.body;
     var model = req.getModel();
-    methods._caller(r.name, r.args, model, function(err, resp) {
+    _caller(r.name, r.args, model, function(err, resp) {
       return res.send({err: err, resp: resp});
     });
   };
