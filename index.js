@@ -1,5 +1,5 @@
 require('coffee-script/register');
-require('log-timestamp')(function() { return  chalk.gray(new Date().toISOString()) + ' %s'});
+require('log-timestamp')(function() { return  chalk.gray(new Date().toISOString()) + ' %s';});
 
 var async = require('async');
 var derby = require('derby');
