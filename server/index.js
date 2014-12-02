@@ -65,9 +65,13 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({extended: true}));
 
-  expressApp.use(session)
-    .use(derbyLogin.middleware(store.store, loginConfig))
-    .use(addSettings)
+  expressApp.use(session);
+
+  if (loginConfig) {
+    expressApp.use(derbyLogin.middleware(store.store, loginConfig));
+  }
+
+  expressApp.use(addSettings)
     .use(handlers.middleware);
 
   // RPC Methods
