@@ -1,4 +1,3 @@
-var conf = require('../config')();
 var nodemailer = require('nodemailer');
 
 var RecipientRequiredError = new Error('one of the followings is required: to, cc or bcc');
@@ -60,6 +59,7 @@ var prettyMessage = function(opts) {
 //  RFC5322 custom headers (dictionary)
 //  
 exports.send = function(opts, callback) {
+  var conf = require('../index').config();
   var c = conf.get('mailer');
   opts = opts || {};
   if (!(opts.to || opts.cc || opts.bcc)) return callback(RecipientRequiredError);

@@ -8,6 +8,9 @@ var chalk = require('chalk');
 var http = require('http');
 var derbyHook = require('derby-hook');
 
+var globalConf;
+
+
 // var path = require('path');
 
 // obj:
@@ -49,6 +52,8 @@ function run(obj, callback) {
     var port = config.get('port');
     var ip = config.get('ip');
     var middleware = obj.middleware || [];
+
+    globalConf = config;
 
     if (obj.methods) {
       var methods = require('./methods');
@@ -101,4 +106,8 @@ function run(obj, callback) {
   });
 }
 
+
 exports.run = run;
+exports.config = function () {
+  return globalConf;
+};
