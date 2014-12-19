@@ -46,6 +46,10 @@ var globalConf;
 //   - function - (err, store, config, expressApp, upgrade)
 function run(obj, callback) {
 
+  if (obj.shareAccess) {
+    derby.use(obj.shareAccess);
+  };
+
   derby.run(function() {
     var config = require('./config')(obj.config);
     var store = require('./store')(derby, obj.schemas, config);
@@ -94,14 +98,14 @@ function run(obj, callback) {
         // Register useful rpc handler
 
       });
-      var obj = {
+      var res = {
         storage: store,
         config: config, 
         express: expressApp, 
         upgrade: upgrade,
         derby: derby
       }
-      callback(undefined, obj);
+      callback(undefined, res);
     });
   });
 }
