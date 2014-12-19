@@ -93,15 +93,15 @@ function run(obj, callback) {
       store.store.on('client', function(client) {
         // Register useful rpc handler
 
-        // ping
-        // ----
-        client.channel.on('ping', function(start, cb) {
-          var end = new Date().getTime();
-          cb('ping duration: ' + (end - start));
-        });
       });
- 
-      callback(undefined, store, config, expressApp, upgrade);
+      var obj = {
+        storage: store,
+        config: config, 
+        express: expressApp, 
+        upgrade: upgrade,
+        derby: derby
+      }
+      callback(undefined, obj);
     });
   });
 }
