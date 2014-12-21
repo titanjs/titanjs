@@ -84,8 +84,10 @@ exports.send = function(opts, callback) {
       callback(null, responseStatus.message, opts.html, opts.text);
       return;
     });
+  } else {
+    // if we are developing or testing don't send out an email instead return
+    // success and the html and txt strings for inspection. And log to console.
+    callback(null, '250 2.0.0 OK 1350452502 s5sm19782310obo.10', opts.html, opts.text);
+    return;
   }
-  // if we are developing or testing don't send out an email instead return
-  // success and the html and txt strings for inspection. And log to console.
-  callback(null, '250 2.0.0 OK 1350452502 s5sm19782310obo.10', opts.html, opts.text);
 };
