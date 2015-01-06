@@ -1,7 +1,7 @@
 var convict = require('convict');
 var path = require('path');
 var url = require('url');
-var check = require('convict/node_modules/validator').check;
+var validator = require('validator');
 
 module.exports = function config(options, cb) {
   options = options || {};
@@ -77,7 +77,7 @@ module.exports = function config(options, cb) {
         env: 'REDIS_USE'
       },
       url: {
-        // format: mongoUrl,
+        format: mongoUrl,
         format: String,
         default: undefined,
         env: 'REDIS_URL',
@@ -176,7 +176,7 @@ function setMongoUrl(config) {
 
 function secret(length) {
   return function (val) {
-    check(val).notEmpty().len(length);
+    validator.isLength(val, length);
   };
 }
 
@@ -186,18 +186,8 @@ function optionalSecret(length) {
   };
 }
 
-function checkUrl(protocol, attributes) {
-  return function (val) {
-    var u = url.parse(val);
-    check(u.protocol, 'Wrong protocol.').equals(protocol);
-    attributes.forEach(function (attr) {
-      check(u[attr]).notEmpty();
-    });
-  };
-}
-
 function mongoUrl(val) {
-  checkUrl('mongodb:', ['hostname','port','path'])(val);
+  validator.isURL(val, { protocols: ['mongodb:']});
 }
 
 function envAlias(source, target) {
@@ -207,11 +197,10 @@ function envAlias(source, target) {
 function mountPoints(val) {
   if (Array.isArray(val)) {
     val.forEach(function (el) {
-      check(el.route).contains('/');
-      check(el.dir).notEmpty();
+      validator.contains(el.route, '/');
+      validator.isNull(el.dir)
     });
   } else {
-    check(val).notEmpty();
+    validator.isNull(val);
   }
 }
-
