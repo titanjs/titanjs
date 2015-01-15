@@ -1,7 +1,7 @@
 // We must use the mongodb module from mongoskin.
 // If we attempt to install it as a root module there will undoubtedly 
 // a version conflict.
-var mongo = require('mongoskin/node_modules/mongodb');
+var mongo = require('mongoskin').mongodb;
 var express = require('express');
 var Grid = require('gridfs-stream');
 var store = require('../store');
