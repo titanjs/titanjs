@@ -1,4 +1,4 @@
-var mongo = require('mongoskin');
+var mongo = require('mongodb');
 var express = require('express');
 var gridform = require('gridform');
 var Grid = require('gridfs-stream');
