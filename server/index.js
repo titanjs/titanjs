@@ -11,7 +11,7 @@ var compression = require('compression');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var highway = require('racer-highway');
-var derbyLogin = require('derby-login');
+// var derbyLogin = require('derby-login');
 
 module.exports = function (config, store, apps, middleware, publicDir, loginConfig, errorMiddleware, cb) {
   // Session
@@ -67,9 +67,9 @@ module.exports = function (config, store, apps, middleware, publicDir, loginConf
 
   expressApp.use(session);
 
-  if (loginConfig) {
-    expressApp.use(derbyLogin.middleware(store.store, loginConfig));
-  }
+//   if (loginConfig) {
+//     expressApp.use(derbyLogin.middleware(store.store, loginConfig));
+//   }
 
   expressApp.use(addSettings)
     .use(handlers.middleware);
